@@ -17,7 +17,10 @@ function getBook(data){
 
 /* ПОЛУЧЕНИЕ ПОЛНОЙ ВЕРСИИ КНИГИ */
     }else if (data.path[0] === 'getbook' && data.path.length === 2) {
-        mongodb.requestMDB('getfullbook', data.callback, {id: data.path[1]}, data.COLLECTION);
+        var callbackFullBook = function(err, result){
+            createFullBookResponce(err, result, data.callback);
+        };
+        mongodb.requestMDB('select', callbackFullBook, {bookid: data.path[1]}, data.COLLECTION);
 
 /* СОЗДАНИЕ КНИГИ */
     }else if (data.path[0] === 'postbook') {
@@ -30,6 +33,72 @@ function getBook(data){
 /* УДАЛЕНИЕ КНИГИ */
     }else if (data.path[0] === 'removebook' && data.path.length === 2) {
         mongodb.requestMDB('remove', data.callback, {id: data.path[1]}, data.COLLECTION);
+    }
+}
+
+/* Создает полную версию книги */
+function createFullBookResponce(err, result, callback){
+    if(err){
+        callback(err, result);
+    }else {
+        var res = {},
+            parts = [],
+            chapters = [];
+
+        /*/!* Найдем объект - книгу *!/
+        result.forEach(function (val) {
+            if (val.type === 'book') res = val;
+        });*/
+
+        /*if(!res){
+            callback('Книга не найдена', 'Книга не найдена');
+            return;
+        }*/
+
+        /* Вставим в нее героев, места и напоминания */
+        result.forEach(function (val) {
+            if (val.type === 'book') {
+                res.book = val;
+            }else if (val.type === 'heroes') {
+                if (!res.heroes) res.heroes = [];
+                res.heroes.push(val);
+            }else if (val.type === 'places') {
+                if (!res.places) res.places = [];
+                res.places.push(val);
+            }else if (val.type === 'reminders') {
+                if (!res.reminders) res.reminders = [];
+                res.reminders.push(val);
+            }else if (val.type === 'part') {
+                parts.push(val);
+            }else if (val.type === 'chapter') {
+                chapters.push(val);
+            }
+        });
+
+        /* Добавим части */
+        if(res.book.parts && res.book.parts.forEach){
+            parts.forEach(function (valParts) {
+                res.book.parts.forEach(function(valRes, keyRes){
+                    if(valParts.id === valRes) res.book.parts[keyRes] = valParts;
+                })
+            })
+        }
+
+        /* Добавим главы */
+        if(res.book.parts && res.book.parts.forEach){
+            chapters.forEach(function (valChapters) {
+                res.book.parts.forEach(function(valPart, keyPart){
+                    if(valPart.chapters && valPart.chapters.forEach){
+                        valPart.chapters.forEach(function(valChapt, keyChapt){
+                            if(valChapters.id === valChapt) res['book']['parts'][keyPart]['chapters'][keyChapt] = valChapters;
+                        })
+                    }
+                })
+            })
+        }
+
+
+        callback(err, res);
     }
 }
 

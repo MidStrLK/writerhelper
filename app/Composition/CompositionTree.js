@@ -11,7 +11,7 @@ Ext.define('APP.Composition.CompositionTree' , {
 
     rootVisible: false,
 
-    initComponent: function(){
+    afterRender: function(){
         this.callParent([].slice.call(arguments));
 
         var me = this.up('CompositionPanel');

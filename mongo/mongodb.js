@@ -33,7 +33,7 @@ console.log('-MDB_request-', path);
 
     if(typeof data === 'string') data = JSON.parse(data);
 
-    if(path === 'getbook'){
+          if(path === 'getbook'){
         selectDB(data, callback, COLLECTION)
     }else if(path === 'postbook'){
         postBook(data, callback, COLLECTION);
@@ -43,7 +43,13 @@ console.log('-MDB_request-', path);
         removeDB(data, callback, COLLECTION);
     }else if(path === 'select'){
         selectDB(data, callback, COLLECTION)
+    }else if(path === 'update'){
+        updateDB(data, callback, COLLECTION)
+    }else if(path === 'insert') {
+        insertDB(data, callback, COLLECTION);
     }
+
+
 
     //
     //if(path === 'insert'){
@@ -187,6 +193,7 @@ function insertDB(data, callback, COLLECTION){
         if(!callback) callback = function(err, result){
             console.info('-MDB_reply- insert - err:', err, ', result: ', (result && result.length) ? result.length : '');
         };
+        console.info('insertDB - ',data);
         COLLECTION.insert(data, callback);
     }
 }
@@ -229,6 +236,45 @@ function removeDB(data, callback, COLLECTION){
             COLLECTION.remove(data, callback)
         }else COLLECTION.remove(callback)
     }
+}
+
+function updateDB(data, callback, COLLECTION){
+    if(!COLLECTION && openconnection[name]) COLLECTION = openconnection[name];
+
+    if(!COLLECTION || !COLLECTION.remove){
+        collectionMongo(function(){
+            updateDB(data, callback);
+        })
+    }else{
+        var selectCallback = function(err, result){
+            if(!err){
+                var res = result[0];
+
+                for(var key in data){
+                    if(!res[key] || res[key] !== data.key) res[key] = data[key];
+                }
+
+                if(res['_id']) delete res['_id'];
+
+                var removeCallback = function(err, result){
+                    if(!err){
+                        insertDB(res, callback, COLLECTION);
+                    }else{
+                        callback(err, result)
+                    }
+                };
+
+                removeDB({id: data.id}, removeCallback,  COLLECTION);
+
+            }else{
+                callback(err, result)
+            }
+        };
+
+        selectDB({id: data.id}, selectCallback, COLLECTION);
+    }
+
+
 }
 
 /*--- СРЕДНИЙ УРОВЕНЬ ---*/

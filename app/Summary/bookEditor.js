@@ -150,9 +150,12 @@ Ext.define('APP.Summary.bookEditor' , {
 
     getFullBook: function(){
         var me = this,
+            panel = me.up('SummaryPanel'),
+            successfunc = panel.showFullBook,
             data = me.getChanges(),
             id = data.id;
-        APP.utils.submitRequest('getbook/' + id);
+
+        APP.utils.submitRequest('getbook/' + id, {successfunc: successfunc, scope: panel});
     },
 
     displayData: function(data){

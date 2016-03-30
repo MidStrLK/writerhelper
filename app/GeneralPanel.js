@@ -1,3 +1,5 @@
+Ext.require('APP.Summary.heroEditor');
+
 Ext.define('APP.GeneralPanel' , {
 	extend: 'Ext.panel.Panel',
 	alias: 'widget.GeneralPanel',
@@ -91,72 +93,58 @@ Ext.define('APP.GeneralPanel' , {
         panel.add(bookEditor);
     },
 
-    /*createBookButtons: function(data){
-        if(!data || !data.length || !data.forEach) return;
+    getFullBook: function(id){
+        if(!id) return;
 
-        var me = this,
-            res = [];
-        data.forEach(function(val){
-            res.push({
-                xtype: 'button',
-                name: val.id,
-                text: val.label,
-                handler: function(btn, event){
-                    me.getBook(val.id);
-                }
-            })
-        });
+        APP.utils.submitRequest('getbook/' + id, {successfunc: this.showFullBook, scope: this});
+    },
 
-        this.removeAll();
-        this.add({
-            xtype: 'container',
-            layout: 'vbox',
-            defaults:{
-                margin: 10
-            },
-            items: [
-                {
-                    xtype: 'container',
-                    defaults:{
-                        margin: 10
-                    },
-                    items: res
-                },{
-                    xtype: 'button',
-                    name: 'addBook',
-                    text: 'Добавить книгу',
-                    handler: function(btn, event){
-                        me.editBook();
-                    }
-                }
-            ]
-        });
-    },*/
+    /* Запускает построение меню для книги */
+    showFullBook:function(data){
+        var summaryPanel = this.getSummaryPanel();
 
-
+        summaryPanel.removeAll();
+        this.createBookTree(data);
+    },
 
     createBookTree: function(data){
-        var book = {
+        var me = this,
+            book = {
                 text: 'Книга',
-                type: 'allbook',
+                type: 'book',
+                id: 'bookroot',
+                bookid: data.book.id,
+                inkId: data.book.id,
                 expanded: true,
                 children: []
             },
             heroes = {
                 text: 'Герои',
-                type: 'allheroes',
+                type: 'heroes',
+                cls: 'book-tree-add-button',
+                id: 'heroesroot',
+                bookid: data.book.id,
+                inkId: data.book.id,
                 expanded: true,
                 children: []
             },
             places = {
                 text: 'Места',
-                type: 'allplaces',
+                type: 'places',
+                id: 'placesroot',
+                cls: 'book-tree-add-button',
                 expanded: true,
+                bookid: data.book.id,
+                inkId: data.book.id,
                 children: []
             },
             reminders = {
                 text: 'Напоминания',
-                type: 'allreminders',
+                type: 'reminders',
+                id: 'remindersroot',
+                cls: 'book-tree-add-button',
+                bookid: data.book.id,
+                inkId: data.book.id,
                 expanded: true,
                 children: []
             },
@@ -164,15 +152,20 @@ Ext.define('APP.GeneralPanel' , {
                 expanded: true,
                 children: [book,heroes,places,reminders]
             },
-            treeStore = this.getTreePanel().getStore();
+            compositionPanel = this.getCompositionPanel();
 
-        data['book'][0]['parts'].forEach(function(val){
+        compositionPanel.removeAll();
+        var CompositionTree = compositionPanel.add(Ext.create(APP.Composition.CompositionTree)),
+            treeStore = CompositionTree.getStore();
+
+        data['book']['parts'].forEach(function(val){
 
             var chapters = [];
 
             val['chapters'].forEach(function(chVal){
                 chapters.push({
                     bookid: chVal.bookid,
+                    cls: 'book-tree-add-button',
                     id: chVal.id,
                     inkId: chVal.inkId,
                     text: chVal.label,
@@ -233,16 +226,149 @@ Ext.define('APP.GeneralPanel' , {
 
     },
 
+    /*createBookButtons: function(data){
+        if(!data || !data.length || !data.forEach) return;
+
+        var me = this,
+            res = [];
+        data.forEach(function(val){
+            res.push({
+                xtype: 'button',
+                name: val.id,
+                text: val.label,
+                handler: function(btn, event){
+                    me.getBook(val.id);
+                }
+            })
+        });
+
+        this.removeAll();
+        this.add({
+            xtype: 'container',
+            layout: 'vbox',
+            defaults:{
+                margin: 10
+            },
+            items: [
+                {
+                    xtype: 'container',
+                    defaults:{
+                        margin: 10
+                    },
+                    items: res
+                },{
+                    xtype: 'button',
+                    name: 'addBook',
+                    text: 'Добавить книгу',
+                    handler: function(btn, event){
+                        me.editBook();
+                    }
+                }
+            ]
+        });
+    },*/
+
+
+
+
+    /* Событие клика по жлементу дерева */
     treeClick: function(self, record, item){
        var data = record.getData(),
-           id = data.id,
+           id   = data.id,
            type = data.type,
-           note = data.note;
+           summaryPanel = this.getSummaryPanel();
 
-        console.log('treeClick',id, type);
+        if(type === 'book'){
+            this.clickOnBook(data, summaryPanel);
+        }else if(type === 'part'){
+            this.clickOnPart(data, summaryPanel);
+        }else if(type === 'chapter'){
+            this.clickOnChapter(data, summaryPanel);
+        }else if(id === 'heroesroot'){
+            this.clickOnHeroes(data, summaryPanel);
+        }else if(type === 'heroes'){
+            this.clickOnHero(data, summaryPanel);
+        }else if(id === 'placesroot'){
+            this.clickOnPlaces(data, summaryPanel);
+        }else if(type === 'places'){
+            this.clickOnPlace(data, summaryPanel);
+        }else if(id === 'remindersroot'){
+            this.clickOnReminders(data, summaryPanel);
+        }else if(type === 'reminders'){
+            this.clickOnReminder(data, summaryPanel);
+        }
 
     },
 
+
+    /*------------------------*/
+    /* КЛИКИ */
+
+    clickOnBook: function(data, summaryPanel){
+
+    },
+
+    clickOnPart: function(data, summaryPanel){
+
+    },
+
+    clickOnChapter: function(data, summaryPanel){
+
+    },
+
+    clickOnHeroes: function(data, summaryPanel){
+        summaryPanel.removeAll();
+        var heroEditor = summaryPanel.add(Ext.create('APP.Summary.heroEditor'));
+        data.id = null;
+        heroEditor.displayData(data);
+    },
+
+    clickOnHero: function(data, summaryPanel){
+        summaryPanel.removeAll();
+        var heroEditor = summaryPanel.add(Ext.create('APP.Summary.heroEditor')),
+            func = function(data){
+                heroEditor.displayData(data);
+            };
+
+        APP.utils.submitRequest('gethero/' + data.id, {successfunc: func});
+    },
+
+    clickOnPlaces: function(data, summaryPanel){
+        summaryPanel.removeAll();
+        var placeEditor = summaryPanel.add(Ext.create('APP.Summary.placeEditor'));
+        data.id = null;
+        placeEditor.displayData(data);
+    },
+
+    clickOnPlace: function(data, summaryPanel){
+        summaryPanel.removeAll();
+        var placeEditor = summaryPanel.add(Ext.create('APP.Summary.placeEditor')),
+            func = function(data){
+                placeEditor.displayData(data);
+            };
+
+        APP.utils.submitRequest('getplace/' + data.id, {successfunc: func});
+    },
+
+    clickOnReminders: function(data, summaryPanel){
+        summaryPanel.removeAll();
+        var reminderEditor = summaryPanel.add(Ext.create('APP.Summary.reminderEditor'));
+        data.id = null;
+        reminderEditor.displayData(data);
+    },
+
+    clickOnReminder: function(data, summaryPanel){
+        summaryPanel.removeAll();
+        var reminderEditor = summaryPanel.add(Ext.create('APP.Summary.reminderEditor')),
+            func = function(data){
+                reminderEditor.displayData(data);
+            };
+
+        APP.utils.submitRequest('getreminder/' + data.id, {successfunc: func});
+    },
+
+    /* КЛИКИ */
+    /*------------------------*/
 
     getSummaryPanel: function(){
         return this.up('desktop').down('SummaryPanel');
