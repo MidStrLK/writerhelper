@@ -1,4 +1,9 @@
-Ext.require('APP.Summary.heroEditor');
+Ext.require([
+    'APP.Summary.heroEditor',
+    'APP.Summary.bookEditor',
+    'APP.Summary.placeEditor',
+    'APP.Summary.reminderEditor'
+]);
 
 Ext.define('APP.GeneralPanel' , {
 	extend: 'Ext.panel.Panel',
@@ -179,6 +184,7 @@ Ext.define('APP.GeneralPanel' , {
                 bookid: val.bookid,
                 id: val.id,
                 inkId: val.inkId,
+                expanded: true,
                 text: val.label,
                 type: val.type,
                 note: val.note,
@@ -305,7 +311,13 @@ Ext.define('APP.GeneralPanel' , {
     /* КЛИКИ */
 
     clickOnBook: function(data, summaryPanel){
+        summaryPanel.removeAll();
+        var bookEditor = summaryPanel.add(Ext.create('APP.Summary.bookEditor')),
+            func = function(data){
+                bookEditor.displayData(data, true);
+            };
 
+        APP.utils.submitRequest('getbookdescription/' + data.bookid, {successfunc: func});
     },
 
     clickOnPart: function(data, summaryPanel){

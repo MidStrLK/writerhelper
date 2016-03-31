@@ -102,8 +102,6 @@ function getFullBook(id, callback, COLLECTION){
 
 
         }
-        console.info('res - ',res);
-
         callback(err, res);
     };
 
@@ -193,7 +191,6 @@ function insertDB(data, callback, COLLECTION){
         if(!callback) callback = function(err, result){
             console.info('-MDB_reply- insert - err:', err, ', result: ', (result && result.length) ? result.length : '');
         };
-        console.info('insertDB - ',data);
         COLLECTION.insert(data, callback);
     }
 }

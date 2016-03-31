@@ -43,17 +43,13 @@ function createFullBookResponce(err, result, callback){
     }else {
         var res = {},
             parts = [],
-            chapters = [];
+            chapters = [],
+            sortFunc = function(left, right){
+                return (left instanceof Object && right instanceof Object && left.datebeg && right.datebeg &&  left.datebeg > right.datebeg)
+            };
 
-        /*/!* Найдем объект - книгу *!/
-        result.forEach(function (val) {
-            if (val.type === 'book') res = val;
-        });*/
-
-        /*if(!res){
-            callback('Книга не найдена', 'Книга не найдена');
-            return;
-        }*/
+        parts.sort(sortFunc);
+        chapters.sort(sortFunc);
 
         /* Вставим в нее героев, места и напоминания */
         result.forEach(function (val) {
@@ -69,6 +65,7 @@ function createFullBookResponce(err, result, callback){
                 if (!res.reminders) res.reminders = [];
                 res.reminders.push(val);
             }else if (val.type === 'part') {
+                val.chapters = [];
                 parts.push(val);
             }else if (val.type === 'chapter') {
                 chapters.push(val);
@@ -76,16 +73,24 @@ function createFullBookResponce(err, result, callback){
         });
 
         /* Добавим части */
-        if(res.book.parts && res.book.parts.forEach){
+        res.book.parts = parts;
+        /*if(res.book.parts && res.book.parts.forEach){
             parts.forEach(function (valParts) {
                 res.book.parts.forEach(function(valRes, keyRes){
                     if(valParts.id === valRes) res.book.parts[keyRes] = valParts;
                 })
             })
-        }
+        }*/
 
         /* Добавим главы */
         if(res.book.parts && res.book.parts.forEach){
+            chapters.forEach(function (valChapters) {
+                res.book.parts.forEach(function(valPart, keyPart) {
+                    if (valChapters.inkId === valPart.id) res['book']['parts'][keyPart]['chapters'].push(valChapters);
+                })
+            })
+        }
+        /*if(res.book.parts && res.book.parts.forEach){
             chapters.forEach(function (valChapters) {
                 res.book.parts.forEach(function(valPart, keyPart){
                     if(valPart.chapters && valPart.chapters.forEach){
@@ -95,7 +100,7 @@ function createFullBookResponce(err, result, callback){
                     }
                 })
             })
-        }
+        }*/
 
 
         callback(err, res);

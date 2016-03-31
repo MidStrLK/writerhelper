@@ -4,6 +4,7 @@ var mongodb     = require("../mongo/mongodb"),
     hero        = require("./hero.js"),
     place       = require("./place.js"),
     reminder    = require("./reminder.js"),
+    part        = require("./part.js"),
     index       = fs.readFileSync('./index.html');
 
 function submitRequest(response, handle, pathname, postData, COLLECTION){
@@ -54,6 +55,8 @@ function submitRequest(response, handle, pathname, postData, COLLECTION){
           place.getPlace(dataForGet);
       }else if(path[0].indexOf('reminder') !== -1){
           reminder.getReminder(dataForGet);
+      }else if(path[0].indexOf('part') !== -1){
+          part.getPart(dataForGet);
       }else if(path[0] === 'removeall'){
           mongodb.requestMDB('remove', func, null, COLLECTION)
       }else{
