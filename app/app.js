@@ -1,6 +1,4 @@
-Ext.require([
-    'APP.utils'
-]);
+Ext.require('APP.utils');
 
 Ext.application({
 
