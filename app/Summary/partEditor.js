@@ -1,8 +1,8 @@
-Ext.define('APP.Summary.placeEditor' , {
+Ext.define('APP.Summary.partEditor' , {
 	extend: 'Ext.panel.Panel',
-	alias: 'widget.placeEditor',
+	alias: 'widget.partEditor',
 
-    name: 'placeEditor',
+    name: 'partEditor',
 
     layout: 'vbox',
 
@@ -35,7 +35,7 @@ Ext.define('APP.Summary.placeEditor' , {
                         {
                             xtype: 'textfield',
                             name: 'label',
-                            fieldLabel: 'Название места',
+                            fieldLabel: 'Название Части',
                             labelAlign: 'top'
                         },{
                             xtype: 'button',
@@ -43,7 +43,7 @@ Ext.define('APP.Summary.placeEditor' , {
                             text: 'Сохранить',
                             margin: '10 0 0 0',
                             handler: function(btn, event){
-                                var me = this.up('placeEditor');
+                                var me = this.up('partEditor');
                                 me.applyData();
                             }
                         },{
@@ -52,8 +52,18 @@ Ext.define('APP.Summary.placeEditor' , {
                             text: 'Удалить',
                             margin: '10 0 0 0',
                             handler: function(btn, event){
-                                var me = this.up('placeEditor');
-                                me.removePlace();
+                                var me = this.up('partEditor');
+                                me.removeHero();
+                            }
+                        },{
+                            xtype: 'button',
+                            name: 'addChapter',
+                            text: 'Создать Главу',
+                            margin: '10 0 0 0',
+                            hidden: true,
+                            handler: function(btn, event){
+                                var me = this.up('partEditor');
+                                me.addChapter();
                             }
                         },{
                             xtype: 'button',
@@ -62,20 +72,11 @@ Ext.define('APP.Summary.placeEditor' , {
                             margin: '10 0 0 0',
                             hidden: true,
                             handler: function(btn, event){
-                                console.log('this - ',this);
-                                var me = this.up('placeEditor');
+                                var me = this.up('partEditor');
                                 me.applyData();
                             }
                         }
                     ]
-                },{
-                    xtype: 'textarea',
-                    name: 'synonyms',
-                    fieldLabel: 'Синонимы',
-                    labelAlign: 'top',
-                    margin: '0 10 10 10',
-                    height: '100%',
-                    flex: 1
                 },{
                     xtype: 'textarea',
                     name: 'note',
@@ -99,10 +100,12 @@ Ext.define('APP.Summary.placeEditor' , {
 
         var saveHero   = this.down('[name="saveHero"]'),
             removeHero = this.down('[name="removeHero"]'),
+            addChapter = this.down('[name="addChapter"]'),
             createHero = this.down('[name="createHero"]');
 
         saveHero.setVisible(data && data.id);
         removeHero.setVisible(data && data.id);
+        addChapter.setVisible(data && data.id);
         createHero.setVisible(!data || !data.id);
 
         this.down('[name="id"]'         ).setValue(data.id);
@@ -110,7 +113,7 @@ Ext.define('APP.Summary.placeEditor' , {
         this.down('[name="inkId"]'      ).setValue(data.inkId);
         this.down('[name="label"]'      ).setValue(data.label       || '');
         this.down('[name="note"]'       ).setValue(data.note        || '');
-        this.down('[name="synonyms"]'   ).setValue(data.synonyms    || '');
+
     },
 
     getChanges: function(){
@@ -119,11 +122,24 @@ Ext.define('APP.Summary.placeEditor' , {
             bookid:     this.down('[name="bookid"]').getValue(),
             inkId:      this.down('[name="inkId"]').getValue(),
             label:      this.down('[name="label"]').getValue(),
-            note:       this.down('[name="note"]').getValue(),
-            synonyms:   this.down('[name="synonyms"]').getValue()
+            note:       this.down('[name="note"]').getValue()
         };
 
         return res;
+    },
+
+    addChapter: function(){
+        var me = this,
+            data = me.getChanges(),
+            summaryPanel = me.up('SummaryPanel'),
+            compositionPanel = summaryPanel.getCompositionPanel();
+        APP.utils.submitRequest('postchapter/' + data.id, {
+            data: data,
+            successfunc: function (respData) {
+                summaryPanel.removeAll();
+                compositionPanel.getFullBook(data.bookid);
+            }
+        });
     },
 
     applyData: function(){
@@ -132,7 +148,7 @@ Ext.define('APP.Summary.placeEditor' , {
             summaryPanel = me.up('SummaryPanel'),
             compositionPanel = summaryPanel.getCompositionPanel();
 
-        APP.utils.submitRequest('postplace',{
+        APP.utils.submitRequest('postpart',{
             data: data,
             successfunc: function(respData){
                 summaryPanel.removeAll();
@@ -141,12 +157,12 @@ Ext.define('APP.Summary.placeEditor' , {
         })
     },
 
-    removePlace: function(){
+    removeHero: function(){
         var me = this,
             data = me.getChanges(),
             summaryPanel = me.up('SummaryPanel'),
             compositionPanel = summaryPanel.getCompositionPanel();
-        APP.utils.submitRequest('removehero/' + data.id, {
+        APP.utils.submitRequest('removepart/' + data.id, {
             successfunc: function (respData) {
                 summaryPanel.removeAll();
                 compositionPanel.getBookList();

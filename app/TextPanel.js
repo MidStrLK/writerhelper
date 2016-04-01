@@ -4,12 +4,13 @@ Ext.define('APP.TextPanel' , {
 
     title: 'TextPanel',
     name: 'TextPanel',
-    layout: 'fit'/*,
+    layout: 'fit',
 
     items: [{
         xtype: 'htmleditor',
+        hidden: true,
         enableColors: false,
         enableAlignments: false
-    }]*/
+    }]
 
 });

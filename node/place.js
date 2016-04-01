@@ -5,8 +5,11 @@ exports.getPlace = getPlace;
 function getPlace(data){
 /* ПОЛУЧЕНИЕ */
     if (data.path[0] === 'getplace' && data.path.length === 2) {
-
-        mongodb.requestMDB('select', data.callback, {id: data.path[1]}, data.COLLECTION);
+        var callbackWrapper = function(err, result){
+            if(result && result instanceof Array && result.length && result.length === 1) result = result[0];
+            data.callback(err, result);
+        };
+        mongodb.requestMDB('select', callbackWrapper, {id: data.path[1]}, data.COLLECTION);
 
 /* СОЗДАНИЕ */
     }else if (data.path[0] === 'postplace') {

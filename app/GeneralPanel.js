@@ -2,7 +2,9 @@ Ext.require([
     'APP.Summary.heroEditor',
     'APP.Summary.bookEditor',
     'APP.Summary.placeEditor',
-    'APP.Summary.reminderEditor'
+    'APP.Summary.reminderEditor',
+    'APP.Summary.partEditor',
+    'APP.Summary.chapterEditor'
 ]);
 
 Ext.define('APP.GeneralPanel' , {
@@ -163,6 +165,13 @@ Ext.define('APP.GeneralPanel' , {
         var CompositionTree = compositionPanel.add(Ext.create(APP.Composition.CompositionTree)),
             treeStore = CompositionTree.getStore();
 
+        if(!Ext.info)       Ext.info           = {};
+        if(data.heroes)     Ext.info.heroes    = data.heroes;
+        if(data.reminders)  Ext.info.reminders = data.reminders;
+        if(data.places)     Ext.info.places    = data.places;
+
+        this.setSynonymsList();
+
         data['book']['parts'].forEach(function(val){
 
             var chapters = [];
@@ -230,6 +239,33 @@ Ext.define('APP.GeneralPanel' , {
 
         treeStore.setRootNode(root);
 
+    },
+
+    /* Из Ext.info создает массивы синонимов */
+    setSynonymsList: function(){
+        if(Ext.info.heroes && Ext.info.heroes.forEach) this.createSynonymsList(Ext.info.heroes);
+        if(Ext.info.places && Ext.info.places.forEach) this.createSynonymsList(Ext.info.places);
+    },
+
+    createSynonymsList: function(data){
+        var name = data[0].type,
+            synonyms = [],
+            synonymsoriginal = [];
+
+        data.forEach(function(val){
+            synonyms.push(val.label);
+            synonymsoriginal.push(val.label);
+            if(val && val.synonyms && typeof val.synonyms === 'string'){
+                var list = val.synonyms.split('\n');
+                synonyms = synonyms.concat(list);
+                for(var i = 0; i < list.length; i++){
+                    synonymsoriginal.push(val.label);
+                }
+            }
+        });
+
+        Ext.info[name + 'synonyms'] = synonyms;
+        Ext.info[name + 'synonymsoriginal'] = synonymsoriginal;
     },
 
     /*createBookButtons: function(data){
@@ -321,11 +357,23 @@ Ext.define('APP.GeneralPanel' , {
     },
 
     clickOnPart: function(data, summaryPanel){
+        summaryPanel.removeAll();
+        var partEditor = summaryPanel.add(Ext.create('APP.Summary.partEditor')),
+            func = function(data){
+                partEditor.displayData(data, true);
+            };
 
+        APP.utils.submitRequest('getpart/' + data.id, {successfunc: func});
     },
 
     clickOnChapter: function(data, summaryPanel){
+        summaryPanel.removeAll();
+        var chapterEditor = summaryPanel.add(Ext.create('APP.Summary.chapterEditor')),
+            func = function(data){
+                chapterEditor.displayData(data, true);
+            };
 
+        APP.utils.submitRequest('getchapter/' + data.id, {successfunc: func});
     },
 
     clickOnHeroes: function(data, summaryPanel){

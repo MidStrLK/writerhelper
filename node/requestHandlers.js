@@ -5,6 +5,7 @@ var mongodb     = require("../mongo/mongodb"),
     place       = require("./place.js"),
     reminder    = require("./reminder.js"),
     part        = require("./part.js"),
+    chapter     = require("./chapter.js"),
     index       = fs.readFileSync('./index.html');
 
 function submitRequest(response, handle, pathname, postData, COLLECTION){
@@ -31,7 +32,7 @@ function submitRequest(response, handle, pathname, postData, COLLECTION){
                 if (result || result === 0) res = result;
                 if (result && (result.result || result.result === 0)) res = result.result;
                 if (result && result.result && (result.result.n || result.result.n === 0)) res = result.result.n;
-                if(res instanceof Array && res.length === 1) res = res[0];
+                //if(res instanceof Array && res.length === 1) res = res[0];
             }
             response.writeHead(httpsc, {'Content-Type': 'application/json', 'charset': 'utf-8'});
             response.write((typeof res === 'string') ? res : JSON.stringify(res));
@@ -57,6 +58,8 @@ function submitRequest(response, handle, pathname, postData, COLLECTION){
           reminder.getReminder(dataForGet);
       }else if(path[0].indexOf('part') !== -1){
           part.getPart(dataForGet);
+      }else if(path[0].indexOf('chapter') !== -1){
+          chapter.getChapter(dataForGet);
       }else if(path[0] === 'removeall'){
           mongodb.requestMDB('remove', func, null, COLLECTION)
       }else{

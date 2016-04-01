@@ -4,14 +4,15 @@ exports.getHero = getHero;
 
 function getHero(data){
 
-/* ПОЛУЧЕНИЕ СПИСКА КНИГ */
-    if (data.path[0] === 'getbook' && data.path.length === 1) {
-        mongodb.requestMDB('select', data.callback, {type: 'book'}, data.COLLECTION);
-
 /* ПОЛУЧЕНИЕ Героя */
-    }else if (data.path[0] === 'gethero' && data.path.length === 2) {
+    if (data.path[0] === 'gethero' && data.path.length === 2) {
 
-        mongodb.requestMDB('select', data.callback, {id: data.path[1]}, data.COLLECTION);
+        var callbackWrapper = function(err, result){
+            if(result && result instanceof Array && result.length && result.length === 1) result = result[0];
+            data.callback(err, result);
+        };
+
+        mongodb.requestMDB('select', callbackWrapper, {id: data.path[1]}, data.COLLECTION);
 
 /* СОЗДАНИЕ КНИГИ */
     }else if (data.path[0] === 'posthero') {

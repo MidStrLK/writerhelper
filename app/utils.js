@@ -29,7 +29,7 @@ Ext.define('APP.utils', {
             request.method   = 'POST';
         }
         if(req && req.scope) request.scope    = req.scope;
-console.info('request - ',request);
+
         Ext.Ajax.request(request)
     }
 });

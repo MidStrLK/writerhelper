@@ -1,8 +1,8 @@
-Ext.define('APP.Summary.placeEditor' , {
+Ext.define('APP.Summary.chapterEditor' , {
 	extend: 'Ext.panel.Panel',
-	alias: 'widget.placeEditor',
+	alias: 'widget.chapterEditor',
 
-    name: 'placeEditor',
+    name: 'chapterEditor',
 
     layout: 'vbox',
 
@@ -35,7 +35,7 @@ Ext.define('APP.Summary.placeEditor' , {
                         {
                             xtype: 'textfield',
                             name: 'label',
-                            fieldLabel: 'Название места',
+                            fieldLabel: 'Название Части',
                             labelAlign: 'top'
                         },{
                             xtype: 'button',
@@ -43,7 +43,7 @@ Ext.define('APP.Summary.placeEditor' , {
                             text: 'Сохранить',
                             margin: '10 0 0 0',
                             handler: function(btn, event){
-                                var me = this.up('placeEditor');
+                                var me = this.up('chapterEditor');
                                 me.applyData();
                             }
                         },{
@@ -52,8 +52,8 @@ Ext.define('APP.Summary.placeEditor' , {
                             text: 'Удалить',
                             margin: '10 0 0 0',
                             handler: function(btn, event){
-                                var me = this.up('placeEditor');
-                                me.removePlace();
+                                var me = this.up('chapterEditor');
+                                me.removeHero();
                             }
                         },{
                             xtype: 'button',
@@ -62,16 +62,23 @@ Ext.define('APP.Summary.placeEditor' , {
                             margin: '10 0 0 0',
                             hidden: true,
                             handler: function(btn, event){
-                                console.log('this - ',this);
-                                var me = this.up('placeEditor');
+                                var me = this.up('chapterEditor');
                                 me.applyData();
                             }
                         }
                     ]
                 },{
                     xtype: 'textarea',
-                    name: 'synonyms',
-                    fieldLabel: 'Синонимы',
+                    name: 'usedHeroes',
+                    fieldLabel: 'Герои',
+                    labelAlign: 'top',
+                    margin: '0 10 10 10',
+                    height: '100%',
+                    flex: 1
+                },{
+                    xtype: 'textarea',
+                    name: 'usedPlaces',
+                    fieldLabel: 'Места',
                     labelAlign: 'top',
                     margin: '0 10 10 10',
                     height: '100%',
@@ -83,7 +90,7 @@ Ext.define('APP.Summary.placeEditor' , {
                     labelAlign: 'top',
                     margin: '0 10 10 10',
                     height: '100%',
-                    flex: 1
+                    flex: 2
                 }
             ]
         },{
@@ -110,20 +117,47 @@ Ext.define('APP.Summary.placeEditor' , {
         this.down('[name="inkId"]'      ).setValue(data.inkId);
         this.down('[name="label"]'      ).setValue(data.label       || '');
         this.down('[name="note"]'       ).setValue(data.note        || '');
-        this.down('[name="synonyms"]'   ).setValue(data.synonyms    || '');
+
+        var textPanel = this.up('SummaryPanel').getTextPanel(),
+            htmlEditor = textPanel.down('htmleditor');
+
+        htmlEditor.show();
+        htmlEditor.setValue(data.text);
+
+        this.setUsed(data.text, 'Heroes');
+        this.setUsed(data.text, 'Places');
+
+    },
+
+    setUsed: function(text, name){
+        var usedTextarea = this.down('[name="used' + name + '"]'),
+            textArr = text.split(' ');
+
+        if( textArr &&
+            textArr.forEach &&
+            Ext.info &&
+            Ext.info[name.toLowerCase() + 'synonyms'] &&
+            Ext.info[name.toLowerCase() + 'synonyms'].forEach &&
+            Ext.info[name.toLowerCase() + 'synonymsoriginal']){
+                textArr.forEach(function(valText){
+                    Ext.info[name.toLowerCase() + 'synonyms'].forEach(function(valSyn, keySyn){
+                        if(valText.toLowerCase().indexOf(valSyn.toLowerCase()) === 0){
+                            usedTextarea.setValue(usedTextarea.getValue() + Ext.info[name.toLowerCase() + 'synonymsoriginal'][keySyn] + '\n')
+                        }
+                    })
+                })
+        }
     },
 
     getChanges: function(){
-        var res = {
+        return {
             id:         this.down('[name="id"]').getValue(),
             bookid:     this.down('[name="bookid"]').getValue(),
             inkId:      this.down('[name="inkId"]').getValue(),
             label:      this.down('[name="label"]').getValue(),
             note:       this.down('[name="note"]').getValue(),
-            synonyms:   this.down('[name="synonyms"]').getValue()
+            text:       this.up('SummaryPanel').getTextPanel().down('htmleditor').getValue()
         };
-
-        return res;
     },
 
     applyData: function(){
@@ -132,7 +166,7 @@ Ext.define('APP.Summary.placeEditor' , {
             summaryPanel = me.up('SummaryPanel'),
             compositionPanel = summaryPanel.getCompositionPanel();
 
-        APP.utils.submitRequest('postplace',{
+        APP.utils.submitRequest('postchapter',{
             data: data,
             successfunc: function(respData){
                 summaryPanel.removeAll();
@@ -141,12 +175,12 @@ Ext.define('APP.Summary.placeEditor' , {
         })
     },
 
-    removePlace: function(){
+    removeHero: function(){
         var me = this,
             data = me.getChanges(),
             summaryPanel = me.up('SummaryPanel'),
             compositionPanel = summaryPanel.getCompositionPanel();
-        APP.utils.submitRequest('removehero/' + data.id, {
+        APP.utils.submitRequest('removechapter/' + data.id, {
             successfunc: function (respData) {
                 summaryPanel.removeAll();
                 compositionPanel.getBookList();

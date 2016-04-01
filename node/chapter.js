@@ -1,10 +1,10 @@
 var mongodb = require("../mongo/mongodb");
 
-exports.getPart = getPart;
+exports.getChapter = getChapter;
 
-function getPart(data){
+function getChapter(data){
 /* ПОЛУЧЕНИЕ */
-    if (data.path[0] === 'getpart' && data.path.length === 2) {
+    if (data.path[0] === 'getchapter' && data.path.length === 2) {
         var callbackWrapper = function(err, result){
             if(result && result instanceof Array && result.length && result.length === 1) result = result[0];
             data.callback(err, result);
@@ -12,38 +12,30 @@ function getPart(data){
         mongodb.requestMDB('select', callbackWrapper, {id: data.path[1]}, data.COLLECTION);
 
 /* СОЗДАНИЕ */
-    }else if (data.path[0] === 'postpart') {
-        if(data.data && data.data.id){
+    }else if (data.path[0] === 'postchapter') {
+        if(data.data && data.data.id && data.data.id.indexOf('chapter') !== -1){
             mongodb.requestMDB('update',data.callback, data.data,  data.COLLECTION)
         }else{
-            createPart(data.path[1], data.callback, data.COLLECTION)
+            createChapter(data.data, data.callback, data.COLLECTION)
         }
 
 /* УДАЛЕНИЕ */
-    }else if (data.path[0] === 'removepart' && data.path.length === 2) {
+    }else if (data.path[0] === 'removechapter' && data.path.length === 2) {
         mongodb.requestMDB('remove', data.callback, {id: data.path[1]}, data.COLLECTION);
     }
 }
 
 /* Создает краткое описание книги */
-function createPart(id, callback, COLLECTION){
-    var datebegPart = Date.now(),
-        datebegChapter = Date.now() + 10,
-        data = [{
-            id: 'part_' + datebegPart,
-            bookid: id,
-            inkId: id,
-            datebeg: datebegPart,
-            label: 'Часть',
-            type: 'part'
-        },{
+function createChapter(data, callback, COLLECTION){
+    var datebegChapter = Date.now() + 10,
+        data1 = {
             id: 'chapter_' + datebegChapter,
-            bookid: id,
-            inkId: 'part_' + datebegPart,
+            bookid: data.bookid,
+            inkId: data.id,
             datebeg: datebegChapter,
             label: 'Глава',
             type: 'chapter'
-        }];
+        };
 
-    mongodb.requestMDB('insert', callback, data, COLLECTION);
+    mongodb.requestMDB('insert', callback, data1, COLLECTION);
 }

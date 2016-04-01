@@ -45,11 +45,15 @@ function createFullBookResponce(err, result, callback){
             parts = [],
             chapters = [],
             sortFunc = function(left, right){
-                return (left instanceof Object && right instanceof Object && left.datebeg && right.datebeg &&  left.datebeg > right.datebeg)
+                console.info('left.id - ',left.id);
+                console.info('right.id - ',right.id);
+                return (left instanceof Object &&
+                        right instanceof Object &&
+                        left.id &&
+                        right.id &&
+                        parseInt(left.id.split('_')[1]) > parseInt(right.id.split('_')[1]));
+                //return (left instanceof Object && right instanceof Object && left.datebeg && right.datebeg &&  left.datebeg > right.datebeg)
             };
-
-        parts.sort(sortFunc);
-        chapters.sort(sortFunc);
 
         /* Вставим в нее героев, места и напоминания */
         result.forEach(function (val) {
@@ -71,6 +75,10 @@ function createFullBookResponce(err, result, callback){
                 chapters.push(val);
             }
         });
+
+
+        parts.sort(sortFunc);
+        chapters.sort(sortFunc);
 
         /* Добавим части */
         res.book.parts = parts;
@@ -101,7 +109,6 @@ function createFullBookResponce(err, result, callback){
                 })
             })
         }*/
-
 
         callback(err, res);
     }
