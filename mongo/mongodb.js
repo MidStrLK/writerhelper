@@ -13,7 +13,7 @@ if(process && process.env && process.env.OPENSHIFT_MONGODB_DB_PASSWORD){
 var mongo = require('mongodb').MongoClient,
     opendb,
     openconnection = [],
-    name = 'weather';
+    name = 'writerdb';
 
 
 
