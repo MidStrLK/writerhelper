@@ -4,7 +4,8 @@ Ext.require([
     'APP.Summary.placeEditor',
     'APP.Summary.reminderEditor',
     'APP.Summary.partEditor',
-    'APP.Summary.chapterEditor'
+    'APP.Summary.chapterEditor',
+    'APP.utils'
 ]);
 
 Ext.define('APP.GeneralPanel' , {
