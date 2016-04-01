@@ -1,5 +1,3 @@
-Ext.require('APP.utils');
-
 Ext.application({
 
 	name: 'APP',
