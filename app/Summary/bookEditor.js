@@ -1,5 +1,5 @@
 Ext.define('APP.Summary.bookEditor' , {
-	extend: 'Ext.panel.Panel',
+	extend: 'APP.Summary.extendEditor',
 	alias: 'widget.bookEditor',
 
     name: 'bookEditor',
@@ -192,6 +192,8 @@ Ext.define('APP.Summary.bookEditor' , {
         addPart.setVisible(isOpen);
         getText.setVisible(!isOpen);
         removeBook.setVisible(!isOpen);
+
+        this.setTitles(data);
     },
 
     createDate: function(timestamp) {
@@ -220,7 +222,7 @@ Ext.define('APP.Summary.bookEditor' , {
         APP.utils.submitRequest('postbook',{
             data: data,
             successfunc: function(respData){
-                summaryPanel.removeAll();
+                //summaryPanel.removeAll();
                 if(!isOpen) compositionPanel.getBookList();
                 if(isOpen) compositionPanel.getFullBook(data.bookid);
 

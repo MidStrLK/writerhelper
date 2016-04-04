@@ -6,7 +6,7 @@ Ext.define('APP.CompositionPanel' , {
 	extend: 'APP.GeneralPanel',
 	alias: 'widget.CompositionPanel',
 
-    title: 'CompositionPanel',
+    title: 'Книги',
     name: 'CompositionPanel',
 
     items: [{

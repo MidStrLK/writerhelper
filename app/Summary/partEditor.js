@@ -1,5 +1,5 @@
 Ext.define('APP.Summary.partEditor' , {
-	extend: 'Ext.panel.Panel',
+	extend: 'APP.Summary.extendEditor',
 	alias: 'widget.partEditor',
 
     name: 'partEditor',
@@ -114,6 +114,8 @@ Ext.define('APP.Summary.partEditor' , {
         this.down('[name="label"]'      ).setValue(data.label       || '');
         this.down('[name="note"]'       ).setValue(data.note        || '');
 
+        this.setTitles(data);
+
     },
 
     getChanges: function(){
@@ -151,7 +153,7 @@ Ext.define('APP.Summary.partEditor' , {
         APP.utils.submitRequest('postpart',{
             data: data,
             successfunc: function(respData){
-                summaryPanel.removeAll();
+                //summaryPanel.removeAll();
                 compositionPanel.getFullBook(data.bookid);
             }
         })

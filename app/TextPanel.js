@@ -2,7 +2,7 @@ Ext.define('APP.TextPanel' , {
 	extend: 'APP.GeneralPanel',
 	alias: 'widget.TextPanel',
 
-    title: 'TextPanel',
+    title: ' ',
     name: 'TextPanel',
     layout: 'fit',
 

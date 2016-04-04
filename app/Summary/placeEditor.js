@@ -1,5 +1,5 @@
 Ext.define('APP.Summary.placeEditor' , {
-	extend: 'Ext.panel.Panel',
+	extend: 'APP.Summary.extendEditor',
 	alias: 'widget.placeEditor',
 
     name: 'placeEditor',
@@ -111,6 +111,8 @@ Ext.define('APP.Summary.placeEditor' , {
         this.down('[name="label"]'      ).setValue(data.label       || '');
         this.down('[name="note"]'       ).setValue(data.note        || '');
         this.down('[name="synonyms"]'   ).setValue(data.synonyms    || '');
+
+        this.setTitles(data);
     },
 
     getChanges: function(){
@@ -135,7 +137,7 @@ Ext.define('APP.Summary.placeEditor' , {
         APP.utils.submitRequest('postplace',{
             data: data,
             successfunc: function(respData){
-                summaryPanel.removeAll();
+                //summaryPanel.removeAll();
                 compositionPanel.getFullBook(data.bookid);
             }
         })

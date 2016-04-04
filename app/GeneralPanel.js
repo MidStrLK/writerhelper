@@ -109,10 +109,82 @@ Ext.define('APP.GeneralPanel' , {
 
     /* Запускает построение меню для книги */
     showFullBook:function(data){
-        var summaryPanel = this.getSummaryPanel();
+        var summaryPanel = this.getSummaryPanel(),
+            selectedElem = this.getSelectedElement(),
+            selectedId;
+
+        if(selectedElem && selectedElem.items && selectedElem.items[0] && selectedElem.items[0].id) {
+            selectedId = selectedElem.items[0].id;
+        }
+
+
 
         summaryPanel.removeAll();
         this.createBookTree(data);
+        this.setSelectedElement(selectedId);
+
+        this.setCompositionPanelTitle(data);
+    },
+
+    setCompositionPanelTitle: function(data){
+        if( data &&
+            data.book &&
+            data.book.label &&
+            this.getCompositionPanel &&
+            this.getCompositionPanel() &&
+            this.getCompositionPanel().setTitle){
+                this.getCompositionPanel().setTitle(data.book.label)
+        }
+    },
+
+    getSelectedElement: function(){
+        var res = undefined;
+        if(
+            this &&
+            this.getCompositionPanel &&
+            this.getCompositionPanel() &&
+            this.getCompositionPanel().down &&
+            this.getCompositionPanel().down('treeview') &&
+            this.getCompositionPanel().down('treeview').getSelectionModel &&
+            this.getCompositionPanel().down('treeview').getSelectionModel() &&
+            this.getCompositionPanel().down('treeview').getSelectionModel().getSelected &&
+            this.getCompositionPanel().down('treeview').getSelectionModel().getSelected()){
+                res = this.getCompositionPanel().down('treeview').getSelectionModel().getSelected();
+        }
+
+        return res;
+    },
+
+    setSelectedElement: function(elem){
+
+        var treeView, record;
+
+        if( this &&
+            this.down &&
+            this.down('treeview')){
+                treeView = this.down('treeview');
+        }
+
+        if( elem &&
+            treeView &&
+            treeView.getStore &&
+            treeView.getStore() &&
+            treeView.getStore().getNodeById &&
+            treeView.getStore().getNodeById(elem)){
+                record = treeView.getStore().getNodeById(elem);
+        }
+
+        if( record &&
+            treeView &&
+            treeView.getSelectionModel &&
+            treeView.getSelectionModel() &&
+            treeView.getSelectionModel().select){
+               treeView.getSelectionModel().select(record);
+        }
+
+        if(record){
+            this.treeClick(this, record);
+        }
     },
 
     createBookTree: function(data){
@@ -320,6 +392,8 @@ Ext.define('APP.GeneralPanel' , {
            id   = data.id,
            type = data.type,
            summaryPanel = this.getSummaryPanel();
+
+        this.getTextPanel().down('htmleditor').hide();
 
         if(type === 'book'){
             this.clickOnBook(data, summaryPanel);

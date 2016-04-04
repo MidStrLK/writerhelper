@@ -1,5 +1,5 @@
 Ext.define('APP.Summary.chapterEditor' , {
-	extend: 'Ext.panel.Panel',
+	extend: 'APP.Summary.extendEditor',
 	alias: 'widget.chapterEditor',
 
     name: 'chapterEditor',
@@ -127,11 +127,15 @@ Ext.define('APP.Summary.chapterEditor' , {
         this.setUsed(data.text, 'Heroes');
         this.setUsed(data.text, 'Places');
 
+        this.setTitles(data);
+
     },
 
     setUsed: function(text, name){
+        if(!text || !name) return;
         var usedTextarea = this.down('[name="used' + name + '"]'),
-            textArr = text.split(' ');
+            textArr = text.split(' '),
+            usedArr = [];
 
         if( textArr &&
             textArr.forEach &&
@@ -142,10 +146,18 @@ Ext.define('APP.Summary.chapterEditor' , {
                 textArr.forEach(function(valText){
                     Ext.info[name.toLowerCase() + 'synonyms'].forEach(function(valSyn, keySyn){
                         if(valText.toLowerCase().indexOf(valSyn.toLowerCase()) === 0){
-                            usedTextarea.setValue(usedTextarea.getValue() + Ext.info[name.toLowerCase() + 'synonymsoriginal'][keySyn] + '\n')
+                            var inUse = false,
+                                inUseName = Ext.info[name.toLowerCase() + 'synonymsoriginal'][keySyn];
+                            usedArr.forEach(function(valUsed){
+                                if(valUsed === inUseName) inUse = true;
+                            });
+                            if(!inUse) usedArr.push(inUseName);
+                            //usedTextarea.setValue(usedTextarea.getValue() + Ext.info[name.toLowerCase() + 'synonymsoriginal'][keySyn] + '\n')
                         }
                     })
-                })
+                });
+
+            usedTextarea.setValue(usedArr.join('\n'));
         }
     },
 
@@ -169,7 +181,7 @@ Ext.define('APP.Summary.chapterEditor' , {
         APP.utils.submitRequest('postchapter',{
             data: data,
             successfunc: function(respData){
-                summaryPanel.removeAll();
+                //summaryPanel.removeAll();
                 compositionPanel.getFullBook(data.bookid);
             }
         })

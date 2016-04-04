@@ -1,5 +1,5 @@
 Ext.define('APP.Summary.heroEditor' , {
-	extend: 'Ext.panel.Panel',
+	extend: 'APP.Summary.extendEditor',
 	alias: 'widget.heroEditor',
 
     name: 'heroEditor',
@@ -111,6 +111,8 @@ Ext.define('APP.Summary.heroEditor' , {
         this.down('[name="label"]'      ).setValue(data.label       || '');
         this.down('[name="note"]'       ).setValue(data.note        || '');
         this.down('[name="synonyms"]'   ).setValue(data.synonyms    || '');
+
+        this.setTitles(data);
     },
 
     getChanges: function(){
@@ -135,7 +137,7 @@ Ext.define('APP.Summary.heroEditor' , {
         APP.utils.submitRequest('posthero',{
             data: data,
             successfunc: function(respData){
-                summaryPanel.removeAll();
+                //summaryPanel.removeAll();
                 compositionPanel.getFullBook(data.bookid);
             }
         })
