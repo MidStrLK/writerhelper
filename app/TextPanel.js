@@ -31,7 +31,7 @@ Ext.define('APP.TextPanel' , {
 
                 var length = html.length;
 
-                if((this.textValue.indexOf(html) !== -1 || html.indexOf(this.textValue) !== -1) && Math.abs(this.textValue.length - length) > 10){
+                if(Math.abs(this.textValue.length - length) > 10 && !chapterEditor.uniqueText(this.textValue, html)){
                     this.textValue = html;
                    chapterEditor.applyData(true);
                 }
