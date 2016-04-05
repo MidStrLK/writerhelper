@@ -14,6 +14,7 @@ function getReminder(data){
 /* СОЗДАНИЕ */
     }else if (data.path[0] === 'postreminder') {
         if(data.data && data.data.id){
+            if(data.data) data.data.datechange = Date.now();
             mongodb.requestMDB('update',data.callback, data.data,  data.COLLECTION)
         }else{
             createReminder(data.data, data.callback, data.COLLECTION)
@@ -29,6 +30,7 @@ function getReminder(data){
 function createReminder(data, callback, COLLECTION){
     data.id = 'reminder_' + Date.now();
     data.datebeg = Date.now();
+    data.datechange = Date.now();
     data.type = 'reminders';
 
     mongodb.requestMDB('insert', callback, data, COLLECTION);

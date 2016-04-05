@@ -245,11 +245,11 @@ Ext.define('APP.GeneralPanel' , {
 
         this.setSynonymsList();
 
-        data['book']['parts'].forEach(function(val){
+        if(data && data['book'] && data['book']['parts'] && data['book']['parts'].forEach) data['book']['parts'].forEach(function(val){
 
             var chapters = [];
 
-            val['chapters'].forEach(function(chVal){
+            if(val && val['chapters'] && val['chapters'].forEach) val['chapters'].forEach(function(chVal){
                 chapters.push({
                     bookid: chVal.bookid,
                     cls: 'book-tree-add-button',
@@ -274,7 +274,7 @@ Ext.define('APP.GeneralPanel' , {
             })
         });
 
-        data['heroes'].forEach(function(val){
+        if(data && data['heroes'] && data['heroes'].forEach) data['heroes'].forEach(function(val){
             heroes.children.push({
                 bookid: val.bookid,
                 id: val.id,
@@ -286,7 +286,7 @@ Ext.define('APP.GeneralPanel' , {
             })
         });
 
-        data['places'].forEach(function(val){
+        if(data && data['places'] && data['places'].forEach) data['places'].forEach(function(val){
             places.children.push({
                 bookid: val.bookid,
                 id: val.id,
@@ -298,7 +298,7 @@ Ext.define('APP.GeneralPanel' , {
             })
         });
 
-        data['reminders'].forEach(function(val){
+        if(data && data['reminders'] && data['reminders'].forEach) data['reminders'].forEach(function(val){
             reminders.children.push({
                 bookid: val.bookid,
                 id: val.id,
@@ -387,8 +387,14 @@ Ext.define('APP.GeneralPanel' , {
 
 
     /* Событие клика по жлементу дерева */
-    treeClick: function(self, record, item){
-       var data = record.getData(),
+    treeClick: function(self, records){
+
+        if(!records || !records[0] || !records[0].getData) return;
+
+        this.saveChapter();
+
+       var record = records[0],
+           data = record.getData(),
            id   = data.id,
            type = data.type,
            summaryPanel = this.getSummaryPanel();
@@ -415,6 +421,15 @@ Ext.define('APP.GeneralPanel' , {
             this.clickOnReminder(data, summaryPanel);
         }
 
+    },
+
+    /* Сохраняет главу, если уходим с нее */
+    saveChapter: function(){
+        var chapterEditor = (this && this.getSummaryPanel && this.getSummaryPanel() && this.getSummaryPanel().down) ? this.getSummaryPanel().down('chapterEditor') : null,
+            htmlEditor = (this && this.getTextPanel && this.getTextPanel() && this.getTextPanel().down) ? this.getTextPanel().down('htmleditor') : null;
+
+        if(htmlEditor) htmlEditor.textValue = null;
+        if(chapterEditor) chapterEditor.applyData(true);
     },
 
 

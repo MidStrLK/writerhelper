@@ -35,7 +35,7 @@ Ext.define('APP.Summary.chapterEditor' , {
                         {
                             xtype: 'textfield',
                             name: 'label',
-                            fieldLabel: 'Название Части',
+                            fieldLabel: 'Название Главы',
                             labelAlign: 'top'
                         },{
                             xtype: 'button',
@@ -50,10 +50,11 @@ Ext.define('APP.Summary.chapterEditor' , {
                             xtype: 'button',
                             name: 'removeHero',
                             text: 'Удалить',
+                            cls: 'button-remove',
                             margin: '10 0 0 0',
                             handler: function(btn, event){
                                 var me = this.up('chapterEditor');
-                                me.removeHero();
+                                me.getMessageBox();
                             }
                         },{
                             xtype: 'button',
@@ -63,7 +64,7 @@ Ext.define('APP.Summary.chapterEditor' , {
                             hidden: true,
                             handler: function(btn, event){
                                 var me = this.up('chapterEditor');
-                                me.applyData();
+                                me.getMessageBox();
                             }
                         }
                     ]
@@ -101,6 +102,7 @@ Ext.define('APP.Summary.chapterEditor' , {
             ]
         }
     ],
+
 
     displayData: function(data){
 
@@ -172,7 +174,8 @@ Ext.define('APP.Summary.chapterEditor' , {
         };
     },
 
-    applyData: function(){
+    applyData: function(notRefresh){
+
         var me = this,
             data = me.getChanges(),
             summaryPanel = me.up('SummaryPanel'),
@@ -182,22 +185,9 @@ Ext.define('APP.Summary.chapterEditor' , {
             data: data,
             successfunc: function(respData){
                 //summaryPanel.removeAll();
-                compositionPanel.getFullBook(data.bookid);
+                if(!notRefresh) compositionPanel.getFullBook(data.bookid);
             }
         })
-    },
-
-    removeHero: function(){
-        var me = this,
-            data = me.getChanges(),
-            summaryPanel = me.up('SummaryPanel'),
-            compositionPanel = summaryPanel.getCompositionPanel();
-        APP.utils.submitRequest('removechapter/' + data.id, {
-            successfunc: function (respData) {
-                summaryPanel.removeAll();
-                compositionPanel.getBookList();
-            }
-        });
     }
 
 });

@@ -15,6 +15,7 @@ Ext.define('APP.Composition.CompositionTree' , {
         this.callParent([].slice.call(arguments));
 
         var me = this.up('CompositionPanel');
-        this.on('itemclick', me.treeClick, me);
+        this.on('selectionchange', me.treeClick, me);
+        //this.on('itemclick', me.treeClick, me);
     }
 });

@@ -35,11 +35,12 @@ Ext.define('APP.Summary.bookEditor' , {
                             xtype: 'button',
                             name: 'writeBook',
                             text: 'Писать',
-                            margin: '42 0 0 0',
+                            margin: '8 0 0 0',
                             handler: function(btn, event){
                                 var me = this.up('bookEditor');
                                 me.getFullBook();
-                            }
+                            },
+                            disabled: true
                         },{
                             xtype: 'button',
                             name: 'getText',
@@ -48,13 +49,14 @@ Ext.define('APP.Summary.bookEditor' , {
                             handler: function(btn, event){
                                 var me = this.up('bookEditor');
                                 console.log('ВОТ ВАШ ТЕКСТ :(');
-                            }
+                            },
+                            disabled: true
                         },{
                             xtype: 'button',
                             name: 'addPart',
                             text: 'Добавить часть',
+                            disabled: true,
                             margin: '10 0 0 0',
-                            hidden: true,
                             handler: function(btn, event){
                                 var me = this.up('bookEditor');
                                 me.addPart();
@@ -97,11 +99,13 @@ Ext.define('APP.Summary.bookEditor' , {
                             xtype: 'button',
                             name: 'removeBook',
                             text: 'Удалить книгу',
+                            cls: 'button-remove',
                             margin: '10 0 0 0',
                             handler: function(btn, event){
                                 var me = this.up('bookEditor');
-                                me.removeBook();
-                            }
+                                me.getMessageBox();
+                            },
+                            disabled: true
                         }
                     ]
                 },{
@@ -176,8 +180,10 @@ Ext.define('APP.Summary.bookEditor' , {
         this.down('[name="heroes"]'     ).setValue(data.heroes      || 0);
         this.down('[name="places"]'     ).setValue(data.places      || 0);
         this.down('[name="reminders"]'  ).setValue(data.reminders   || 0);
+        this.down('[name="symbols"]'    ).setValue(data.symbols   || 0);
         this.down('[name="note"]'       ).setValue(data.note        || '');
         this.down('[name="datebeg"]'    ).setValue(this.createDate(data.datebeg));
+        this.down('[name="datechange"]'    ).setValue(this.createDate(data.datechange));
 
         var writeBook   = this.down('[name="writeBook"]'),
             //saveBook    = this.down('[name="saveBook"]'),
@@ -187,11 +193,15 @@ Ext.define('APP.Summary.bookEditor' , {
 
         this.isOpen = isOpen;
 
-        writeBook.setVisible(!isOpen);
-        //saveBook.setVisible(!isOpen);
-        addPart.setVisible(isOpen);
-        getText.setVisible(!isOpen);
-        removeBook.setVisible(!isOpen);
+        //writeBook.setVisible(!isOpen);
+        //addPart.setVisible(isOpen);
+        //getText.setVisible(!isOpen);
+        //removeBook.setVisible(!isOpen);
+
+        writeBook.setDisabled(isOpen);
+        addPart.setDisabled(!isOpen);
+        //getText.setDisabled(isOpen);
+        removeBook.setDisabled(isOpen);
 
         this.setTitles(data);
     },
@@ -239,19 +249,6 @@ Ext.define('APP.Summary.bookEditor' , {
             successfunc: function (respData) {
                 summaryPanel.removeAll();
                 compositionPanel.getFullBook(data.id);
-            }
-        });
-    },
-
-    removeBook: function(){
-        var me = this,
-            data = me.getChanges(),
-            summaryPanel = me.up('SummaryPanel'),
-            compositionPanel = summaryPanel.getCompositionPanel();
-        APP.utils.submitRequest('removebook/' + data.id, {
-            successfunc: function (respData) {
-                summaryPanel.removeAll();
-                compositionPanel.getBookList();
             }
         });
     }

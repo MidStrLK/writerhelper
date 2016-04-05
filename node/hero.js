@@ -17,6 +17,7 @@ function getHero(data){
 /* СОЗДАНИЕ КНИГИ */
     }else if (data.path[0] === 'posthero') {
         if(data.data && data.data.id){
+            if(data.data) data.data.datechange = Date.now();
             mongodb.requestMDB('update',data.callback, data.data,  data.COLLECTION)
         }else{
             createHero(data.data, data.callback, data.COLLECTION)
@@ -32,6 +33,7 @@ function getHero(data){
 function createHero(data, callback, COLLECTION){
     data.id = 'hero_' + Date.now();
     data.datebeg = Date.now();
+    data.datechange = Date.now();
     data.type = 'heroes';
 
     mongodb.requestMDB('insert', callback, data, COLLECTION);

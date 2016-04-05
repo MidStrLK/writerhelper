@@ -14,6 +14,7 @@ function getChapter(data){
 /* СОЗДАНИЕ */
     }else if (data.path[0] === 'postchapter') {
         if(data.data && data.data.id && data.data.id.indexOf('chapter') !== -1){
+            if(data.data) data.data.datechange = Date.now();
             mongodb.requestMDB('update',data.callback, data.data,  data.COLLECTION)
         }else{
             createChapter(data.data, data.callback, data.COLLECTION)
@@ -33,6 +34,7 @@ function createChapter(data, callback, COLLECTION){
             bookid: data.bookid,
             inkId: data.id,
             datebeg: datebegChapter,
+            datechange: datebegChapter,
             label: 'Глава',
             type: 'chapter'
         };

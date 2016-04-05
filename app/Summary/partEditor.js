@@ -50,10 +50,11 @@ Ext.define('APP.Summary.partEditor' , {
                             xtype: 'button',
                             name: 'removeHero',
                             text: 'Удалить',
+                            cls: 'button-remove',
                             margin: '10 0 0 0',
                             handler: function(btn, event){
                                 var me = this.up('partEditor');
-                                me.removeHero();
+                                me.getMessageBox();
                             }
                         },{
                             xtype: 'button',
@@ -157,19 +158,6 @@ Ext.define('APP.Summary.partEditor' , {
                 compositionPanel.getFullBook(data.bookid);
             }
         })
-    },
-
-    removeHero: function(){
-        var me = this,
-            data = me.getChanges(),
-            summaryPanel = me.up('SummaryPanel'),
-            compositionPanel = summaryPanel.getCompositionPanel();
-        APP.utils.submitRequest('removepart/' + data.id, {
-            successfunc: function (respData) {
-                summaryPanel.removeAll();
-                compositionPanel.getBookList();
-            }
-        });
     }
 
 });

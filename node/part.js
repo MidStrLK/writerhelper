@@ -14,6 +14,7 @@ function getPart(data){
 /* СОЗДАНИЕ */
     }else if (data.path[0] === 'postpart') {
         if(data.data && data.data.id){
+            if(data.data) data.data.datechange = Date.now();
             mongodb.requestMDB('update',data.callback, data.data,  data.COLLECTION)
         }else{
             createPart(data.path[1], data.callback, data.COLLECTION)
@@ -34,6 +35,7 @@ function createPart(id, callback, COLLECTION){
             bookid: id,
             inkId: id,
             datebeg: datebegPart,
+            datechange: datebegPart,
             label: 'Часть',
             type: 'part'
         },{
@@ -41,6 +43,7 @@ function createPart(id, callback, COLLECTION){
             bookid: id,
             inkId: 'part_' + datebegPart,
             datebeg: datebegChapter,
+            datechange: datebegChapter,
             label: 'Глава',
             type: 'chapter'
         }];

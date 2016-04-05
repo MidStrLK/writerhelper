@@ -14,6 +14,7 @@ function getPlace(data){
 /* СОЗДАНИЕ */
     }else if (data.path[0] === 'postplace') {
         if(data.data && data.data.id){
+            if(data.data) data.data.datechange = Date.now();
             mongodb.requestMDB('update',data.callback, data.data,  data.COLLECTION)
         }else{
             createPlace(data.data, data.callback, data.COLLECTION)
@@ -29,6 +30,7 @@ function getPlace(data){
 function createPlace(data, callback, COLLECTION){
     data.id = 'place_' + Date.now();
     data.datebeg = Date.now();
+    data.datechange = Date.now();
     data.type = 'places';
 
     mongodb.requestMDB('insert', callback, data, COLLECTION);

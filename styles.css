@@ -1,0 +1,9 @@
+.button-remove{
+    border-color: red;
+    background-color: red;
+    background-image: none;
+}
+
+.button-remove .x-btn-wrap{
+    background-color: red;
+}

@@ -36,7 +36,14 @@ Ext.define('APP.Summary.heroEditor' , {
                             xtype: 'textfield',
                             name: 'label',
                             fieldLabel: 'Имя Героя',
-                            labelAlign: 'top'
+                            labelAlign: 'top',
+                            listeners:{
+                                change: function(field, text){
+                                    var button = (this && this.up && this.up('panel') && this.up('panel').down) ? this.up('panel').down('[name="createHero"]') : null;
+                                    console.info('text - ',button, text);
+                                    if(button) button.setDisabled(!text);
+                                }
+                            }
                         },{
                             xtype: 'button',
                             name: 'saveHero',
@@ -50,19 +57,20 @@ Ext.define('APP.Summary.heroEditor' , {
                             xtype: 'button',
                             name: 'removeHero',
                             text: 'Удалить',
+                            cls: 'button-remove',
                             margin: '10 0 0 0',
                             handler: function(btn, event){
                                 var me = this.up('heroEditor');
-                                me.removeHero();
+                                me.getMessageBox();
                             }
                         },{
                             xtype: 'button',
                             name: 'createHero',
                             text: 'Создать',
+                            disabled: true,
                             margin: '10 0 0 0',
                             hidden: true,
                             handler: function(btn, event){
-                                console.log('this - ',this);
                                 var me = this.up('heroEditor');
                                 me.applyData();
                             }
@@ -141,19 +149,6 @@ Ext.define('APP.Summary.heroEditor' , {
                 compositionPanel.getFullBook(data.bookid);
             }
         })
-    },
-
-    removeHero: function(){
-        var me = this,
-            data = me.getChanges(),
-            summaryPanel = me.up('SummaryPanel'),
-            compositionPanel = summaryPanel.getCompositionPanel();
-        APP.utils.submitRequest('removehero/' + data.id, {
-            successfunc: function (respData) {
-                summaryPanel.removeAll();
-                compositionPanel.getBookList();
-            }
-        });
     }
 
 });

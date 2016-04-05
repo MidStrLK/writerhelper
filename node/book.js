@@ -25,6 +25,7 @@ function getBook(data){
 /* СОЗДАНИЕ КНИГИ */
     }else if (data.path[0] === 'postbook') {
         if(data.data && data.data.id){
+            if(data.data) data.data.datechange = Date.now();
             updateBook(data.data, data.callback, data.COLLECTION)
         }else{
             createBook(data.data, data.callback, data.COLLECTION)
@@ -128,6 +129,8 @@ function createDescriptionResponce(err, result, callback){
                     label:      val.label,
                     note:       val.note,
                     datebeg:    val.datebeg,
+                    datechange: val.datechange,
+                    symbols:    0,
                     part:       0,
                     chapter:    0,
                     heroes:     0,
@@ -138,7 +141,10 @@ function createDescriptionResponce(err, result, callback){
         });
 
         result.forEach(function(val){
+            if(val.datechange && res.datechange && val.datechange > res.datechange) res.datechange = val.datechange;
             if(val.type !== 'book') res[val.type]++;
+
+            if(val.type === 'chapter' && val.text) res.symbols += val.text.replace(/<\/?[^>]+>/g,'').length;
         });
 
         callback(err, res);
@@ -186,5 +192,6 @@ function updateBook(data, callback, COLLECTION){
 function createBook(data, callback, COLLECTION){
     data.bookid = data.id;
     data.datebeg = Date.now();
+    data.datechange = Date.now();
     mongodb.requestMDB('postbook', callback, data, COLLECTION);
 }
