@@ -25,6 +25,14 @@ Ext.define('APP.GeneralPanel' , {
     addBookButtons: function(data){
         var me = this;
 
+        if(me.xtype && me.xtype !== 'CompositionPanel' && me.getCompositionPanel){
+            me = me.getCompositionPanel();
+        }
+
+        if(me && me.getSummaryPanel){
+            me.getSummaryPanel().removeAll();
+        }
+
         me.removeAll();
         if(data && data.forEach){
             data.forEach(function(val){
@@ -32,6 +40,8 @@ Ext.define('APP.GeneralPanel' , {
                     xtype: 'button',
                     name: val.id,
                     text: val.label,
+                    iconCls: 'icon-book',
+                    textAlign: 'left',
                     handler: function(btn, event){
                         me.getBookDescription(val.id);
                     },
@@ -44,6 +54,7 @@ Ext.define('APP.GeneralPanel' , {
         me.add({
             xtype: 'button',
             text: 'Новая книга',
+            iconCls: 'icon-plus',
             width: '100%',
             margin: '20 0 40 0',
             cls: 'books-button books-button-add',
@@ -55,8 +66,9 @@ Ext.define('APP.GeneralPanel' , {
         me.add({
             xtype: 'button',
             text: 'УДАЛИТЬ ВСЕ',
+            iconCls: 'icon-remove',
             width: '100%',
-            cls: 'books-button books-button-add',
+            cls: 'button-remove',
             handler: function(btn, event){
                 APP.utils.submitRequest('removeall');
                 me.getBookList();

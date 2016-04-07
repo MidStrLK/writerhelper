@@ -7,3 +7,25 @@
 .button-remove .x-btn-wrap{
     background-color: red;
 }
+
+.icon-save{
+    background-image: url(/img/icon-save-w.png) !important;
+}
+.icon-close{
+    background-image: url(/img/icon-close-w.png) !important;
+}
+.icon-edit{
+    background-image: url(/img/icon-edit-w.png) !important;
+}
+.icon-plus{
+    background-image: url(/img/icon-plus-w.png) !important;
+}
+.icon-remove{
+    background-image: url(/img/icon-remove-w.png) !important;
+}
+.icon-text{
+    background-image: url(/img/icon-text-w.png) !important;
+}
+.icon-book{
+    background-image: url(/img/icon-book-w.png) !important;
+}

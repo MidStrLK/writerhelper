@@ -41,6 +41,7 @@ Ext.define('APP.Summary.chapterEditor' , {
                             xtype: 'button',
                             name: 'saveHero',
                             text: 'Сохранить',
+                            iconCls: 'icon-save',
                             margin: '10 0 0 0',
                             handler: function(btn, event){
                                 var me = this.up('chapterEditor');
@@ -51,6 +52,7 @@ Ext.define('APP.Summary.chapterEditor' , {
                             name: 'removeHero',
                             text: 'Удалить',
                             cls: 'button-remove',
+                            iconCls: 'icon-remove',
                             margin: '10 0 0 0',
                             handler: function(btn, event){
                                 var me = this.up('chapterEditor');
@@ -60,6 +62,7 @@ Ext.define('APP.Summary.chapterEditor' , {
                             xtype: 'button',
                             name: 'createHero',
                             text: 'Создать',
+                            iconCls: 'icon-plus',
                             margin: '10 0 0 0',
                             hidden: true,
                             handler: function(btn, event){

@@ -48,6 +48,7 @@ Ext.define('APP.Summary.reminderEditor' , {
                             xtype: 'button',
                             name: 'saveHero',
                             text: 'Сохранить',
+                            iconCls: 'icon-save',
                             margin: '10 0 0 0',
                             handler: function(btn, event){
                                 var me = this.up('reminderEditor');
@@ -57,6 +58,7 @@ Ext.define('APP.Summary.reminderEditor' , {
                             xtype: 'button',
                             name: 'removeHero',
                             text: 'Удалить',
+                            iconCls: 'icon-remove',
                             cls: 'button-remove',
                             margin: '10 0 0 0',
                             handler: function(btn, event){
@@ -67,6 +69,7 @@ Ext.define('APP.Summary.reminderEditor' , {
                             xtype: 'button',
                             name: 'createHero',
                             text: 'Создать',
+                            iconCls: 'icon-plus',
                             disabled: true,
                             margin: '10 0 0 0',
                             hidden: true,

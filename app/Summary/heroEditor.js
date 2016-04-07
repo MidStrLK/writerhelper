@@ -48,6 +48,7 @@ Ext.define('APP.Summary.heroEditor' , {
                             xtype: 'button',
                             name: 'saveHero',
                             text: 'Сохранить',
+                            iconCls: 'icon-save',
                             margin: '10 0 0 0',
                             handler: function(btn, event){
                                 var me = this.up('heroEditor');
@@ -58,6 +59,7 @@ Ext.define('APP.Summary.heroEditor' , {
                             name: 'removeHero',
                             text: 'Удалить',
                             cls: 'button-remove',
+                            iconCls: 'icon-remove',
                             margin: '10 0 0 0',
                             handler: function(btn, event){
                                 var me = this.up('heroEditor');
@@ -67,6 +69,7 @@ Ext.define('APP.Summary.heroEditor' , {
                             xtype: 'button',
                             name: 'createHero',
                             text: 'Создать',
+                            iconCls: 'icon-plus',
                             disabled: true,
                             margin: '10 0 0 0',
                             hidden: true,

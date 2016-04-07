@@ -41,6 +41,7 @@ Ext.define('APP.Summary.partEditor' , {
                             xtype: 'button',
                             name: 'saveHero',
                             text: 'Сохранить',
+                            iconCls: 'icon-save',
                             margin: '10 0 0 0',
                             handler: function(btn, event){
                                 var me = this.up('partEditor');
@@ -51,6 +52,7 @@ Ext.define('APP.Summary.partEditor' , {
                             name: 'removeHero',
                             text: 'Удалить',
                             cls: 'button-remove',
+                            iconCls: 'icon-remove',
                             margin: '10 0 0 0',
                             handler: function(btn, event){
                                 var me = this.up('partEditor');
@@ -60,6 +62,7 @@ Ext.define('APP.Summary.partEditor' , {
                             xtype: 'button',
                             name: 'addChapter',
                             text: 'Создать Главу',
+                            iconCls: 'icon-plus',
                             margin: '10 0 0 0',
                             hidden: true,
                             handler: function(btn, event){
@@ -69,6 +72,7 @@ Ext.define('APP.Summary.partEditor' , {
                         },{
                             xtype: 'button',
                             name: 'createHero',
+                            iconCls: 'icon-plus',
                             text: 'Создать',
                             margin: '10 0 0 0',
                             hidden: true,

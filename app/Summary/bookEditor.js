@@ -34,6 +34,7 @@ Ext.define('APP.Summary.bookEditor' , {
                         },{
                             xtype: 'button',
                             name: 'writeBook',
+                            iconCls: 'icon-edit',
                             text: 'Писать',
                             margin: '8 0 0 0',
                             handler: function(btn, event){
@@ -45,6 +46,7 @@ Ext.define('APP.Summary.bookEditor' , {
                             xtype: 'button',
                             name: 'getText',
                             text: 'Получить текст',
+                            iconCls: 'icon-text',
                             margin: '10 0 0 0',
                             handler: function(btn, event){
                                 var me = this.up('bookEditor');
@@ -55,6 +57,7 @@ Ext.define('APP.Summary.bookEditor' , {
                             xtype: 'button',
                             name: 'addPart',
                             text: 'Добавить часть',
+                            iconCls: 'icon-plus',
                             disabled: true,
                             margin: '10 0 0 0',
                             handler: function(btn, event){
@@ -89,23 +92,45 @@ Ext.define('APP.Summary.bookEditor' , {
                         },{
                             xtype: 'button',
                             name: 'saveBook',
-                            text: 'Сохранить книгу',
+                            iconCls: 'icon-save',
+                            text: 'Сохранить',
                             margin: '10 0 0 0',
                             handler: function(btn, event){
                                 var me = this.up('bookEditor');
                                 me.applyData();
                             }
                         },{
-                            xtype: 'button',
-                            name: 'removeBook',
-                            text: 'Удалить книгу',
-                            cls: 'button-remove',
-                            margin: '10 0 0 0',
-                            handler: function(btn, event){
-                                var me = this.up('bookEditor');
-                                me.getMessageBox();
-                            },
-                            disabled: true
+                            xtype: 'container',
+                            layout: 'hbox',
+                            items:[
+                                {
+                                    xtype: 'button',
+                                    name: 'closeBook',
+                                    iconCls: 'icon-close',
+                                    text: 'Закрыть',
+                                    margin: '10 10 0 0',
+                                    width: '50%',
+                                    handler: function(btn, event){
+                                        if(this && this.up && this.up('SummaryPanel')){
+                                            this.up('SummaryPanel').getBookList();
+                                        }
+                                    },
+                                    disabled: true
+                                },{
+                                    xtype: 'button',
+                                    name: 'removeBook',
+                                    text: 'Удалить',
+                                    cls: 'button-remove',
+                                    iconCls: 'icon-remove',
+                                    margin: '10 0 0 0',
+                                    width: '50%',
+                                    handler: function(btn, event){
+                                        var me = this.up('bookEditor');
+                                        me.getMessageBox();
+                                    },
+                                    disabled: true
+                                }
+                            ]
                         }
                     ]
                 },{
@@ -189,7 +214,8 @@ Ext.define('APP.Summary.bookEditor' , {
             //saveBook    = this.down('[name="saveBook"]'),
             addPart     = this.down('[name="addPart"]'),
             getText     = this.down('[name="getText"]'),
-            removeBook  = this.down('[name="removeBook"]');
+            removeBook  = this.down('[name="removeBook"]'),
+            closeBook  = this.down('[name="closeBook"]');
 
         this.isOpen = isOpen;
 
@@ -202,6 +228,7 @@ Ext.define('APP.Summary.bookEditor' , {
         addPart.setDisabled(!isOpen);
         //getText.setDisabled(isOpen);
         removeBook.setDisabled(isOpen);
+        closeBook.setDisabled(!isOpen);
 
         this.setTitles(data);
     },
@@ -222,7 +249,6 @@ Ext.define('APP.Summary.bookEditor' , {
     },
 
     applyData: function(){
-        console.log('this - ',this);
         var me = this,
             isOpen = me.isOpen,
             data = me.getChanges(),
